@@ -12,4 +12,13 @@ module Mastermind
 
   COLORS = { "blue" => BLUE, "yellow" => YELLOW, "red" => RED, "white" => WHITE,
              "green" => GREEN, "purple" => PURPLE }.freeze
+
+  MAX_TURNS = 12
+
+  def intro
+    puts "Welcome to Mastermind"
+    puts "\nYou have 12 attempts to guess the secret code."
+    puts "\n Here are the available colors:"
+    puts colors
+  end
 end
