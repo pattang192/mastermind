@@ -31,9 +31,19 @@ module Mastermind
   def choose_role
     puts "\nTo be the code maker, enter 1. To be the codebreaker, enter 2."
     human_player = gets.chomp.to_i
+    display(human_player)
     return human_player if [1, 2].include?(human_player)
 
     puts "That's not an option."
     choose_role
+  end
+
+  def display(human_player)
+    case human_player
+    when 1
+      puts "The computer has 12 tries to crack your code."
+    when 2
+      puts "You have 12 tries to crack the code."
+    end
   end
 end
