@@ -97,4 +97,35 @@ class HumanPlayer < Player
     end
     array.join(" ")
   end
+
+  def check_guess
+    num_red_pegs = correct_positions
+    num_white_pegs = wrong_positions
+    if (num_red_pegs + num_white_pegs) <= 4
+      @game.give_hint(num_red_pegs, num_white_pegs)
+    else
+      puts "That doesn't add up. Try again."
+      check_guess
+    end
+  end
+
+  def correct_positions
+    puts "How many colors are in the correct position?"
+    num_of_pegs
+  end
+
+  def wrong_positions
+    puts "How many colors are correct, but in the wrong position?"
+    num_of_pegs
+  end
+
+  def num_of_pegs
+    pegs = gets.chomp.to_i
+    if pegs.positive? && pegs <= 4
+      pegs
+    else
+      puts "Invalid entry".red
+      num_of_pegs
+    end
+  end
 end
