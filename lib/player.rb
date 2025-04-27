@@ -29,7 +29,57 @@ class ComputerPlayer < Player
       code << " #{random_color}"
       i += 1
     end
-    code
+    code.strip
+  end
+
+  def check_guess
+    code = @code.split
+    guess = @board.last.split
+    correct_positions = find_correct_positions(code, guess)
+    remove_correct_positions(correct_positions, code, guess)
+    wrong_positions = find_wrong_positions(code, guess)
+    give_hint(correct_positions.size, wrong_positions)
+  end
+
+  def find_correct_positions(code, guess)
+    correct_positions = []
+    code.each_with_index do |color_i, i|
+      correct_positions << i if color_i == guess[i]
+    end
+    correct_positions
+  end
+
+  def remove_correct_positions(correct_positions, code, guess)
+    correct_positions.reverse.each do |index|
+      code.delete_at(index)
+      guess.delete_at(index)
+    end
+  end
+
+  def find_wrong_positions(code, guess)
+    wrong_positions = 0
+    code.reverse.each_with_index do |color_i, i|
+      next unless guess.index(color_i)
+
+      wrong_positions += 1
+      guess.delete_at(guess.index(color_i))
+      code.delete_at(i)
+    end
+    wrong_positions
+  end
+
+  def print_board
+    @board.each_with_index do |guess, i|
+      puts "\n#{guess} Guess #{i + 1} \t Hint: #{@hint_board[i]}"
+    end
+  end
+
+  def give_hint(num_red_pegs, num_white_pegs)
+    hint = ""
+    hint << (" #{RED}" * num_red_pegs) << (" #{WHITE}" * num_white_pegs)
+    hint << (" #{GRAY}" * (4 - (num_red_pegs + num_white_pegs))) if (num_red_pegs + num_white_pegs) < 4
+    @hint_board << hint
+    print_board
   end
 end
 
