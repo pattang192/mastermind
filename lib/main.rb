@@ -6,9 +6,17 @@ require_relative "game"
 require_relative "mastermind"
 require_relative "player"
 
+include Mastermind
+
 def play_game
-  game = Game.new
-  game.play
+  intro
+  human_player = choose_role
+  case human_player
+  when 1
+    Game.new(HumanPlayer, ComputerPlayer).play
+  when 2
+    Game.new(ComputerPlayer, HumanPlayer).play
+  end
   repeat_game
 end
 

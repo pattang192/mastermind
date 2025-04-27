@@ -17,8 +17,7 @@ module Mastermind
 
   def intro
     puts "Welcome to Mastermind"
-    puts "\nYou have 12 attempts to guess the secret code."
-    puts colors
+    puts "\n#{colors}"
   end
 
   def colors
@@ -26,7 +25,15 @@ module Mastermind
     COLORS.each do |key, value|
       colors << " #{value} #{key}"
     end
-    puts "\nHere are the available colors:"
     colors.strip
+  end
+
+  def choose_role
+    puts "\nTo be the code maker, enter 1. To be the codebreaker, enter 2."
+    human_player = gets.chomp.to_i
+    return human_player if [1, 2].include?(human_player)
+
+    puts "That's not an option."
+    choose_role
   end
 end
