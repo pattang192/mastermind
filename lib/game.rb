@@ -14,7 +14,6 @@ class Game
   end
 
   def play
-    puts intro
     loop do
       @players[1].input_guess(@board)
       @players[0].check_guess(@code)
