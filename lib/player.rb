@@ -6,9 +6,9 @@ require_relative "game"
 class Player
   include Mastermind
 
-  def initialize(board, hint_board)
+  def initialize(board, game)
     @board = board
-    @hint_board = hint_board
+    @game = game
   end
 end
 
@@ -34,7 +34,7 @@ class ComputerPlayer < Player
     correct_positions = find_correct_positions(code, guess)
     remove_correct_positions(correct_positions, code, guess)
     wrong_positions = find_wrong_positions(code, guess)
-    give_hint(correct_positions.size, wrong_positions)
+    @game.give_hint(correct_positions.size, wrong_positions)
   end
 
   def find_correct_positions(code, guess)
@@ -62,13 +62,6 @@ class ComputerPlayer < Player
       code.delete_at(i)
     end
     wrong_positions
-  end
-
-  def give_hint(num_red_pegs, num_white_pegs)
-    hint = ""
-    hint << (" #{RED}" * num_red_pegs) << (" #{WHITE}" * num_white_pegs)
-    hint << (" #{GRAY}" * (4 - (num_red_pegs + num_white_pegs))) if (num_red_pegs + num_white_pegs) < 4
-    @hint_board << hint
   end
 end
 

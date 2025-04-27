@@ -9,7 +9,7 @@ class Game
   def initialize(player_1_class, player_2_class)
     @board = []
     @hint_board = []
-    @players = [player_1_class.new(@board, @hint_board), player_2_class.new(@board, @hint_board)]
+    @players = [player_1_class.new(@board, self), player_2_class.new(@board, self)]
     @code = @players[0].generate_code
   end
 
@@ -27,6 +27,13 @@ class Game
     @board.each_with_index do |guess, i|
       puts "\n#{guess} Guess #{i + 1} \t Hint: #{@hint_board[i]}"
     end
+  end
+
+  def give_hint(num_red_pegs, num_white_pegs)
+    hint = ""
+    hint << (" #{RED}" * num_red_pegs) << (" #{WHITE}" * num_white_pegs)
+    hint << (" #{GRAY}" * (4 - (num_red_pegs + num_white_pegs))) if (num_red_pegs + num_white_pegs) < 4
+    @hint_board << hint
   end
 
   def max_turns?
