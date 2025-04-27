@@ -74,15 +74,24 @@ end
 
 # Contains functions unique to human player
 class HumanPlayer < Player
-  def input_guess(board)
-    puts "Enter your guess, separated by spaces. (Eg. red blue red blue)"
-    guess = gets.chomp.downcase.strip.split
-    if code_valid?(guess)
-      board << convert_to_pegs(guess)
+  def create_code
+    code = gets.chomp.downcase.strip.split
+    if code_valid?(code)
+      convert_to_pegs(code)
     else
       puts "Invalid input".red
-      input_guess
+      generate_code
     end
+  end
+
+  def generate_code
+    puts "Enter a four-color code, separated by spaces. (Eg. red blue red white)"
+    create_code
+  end
+
+  def input_guess(board)
+    puts "Enter your guess, separated by spaces. (Eg. red blue red blue)"
+    board << create_code
   end
 
   def code_valid?(code)
