@@ -18,7 +18,15 @@ module Mastermind
   def intro
     puts "Welcome to Mastermind"
     puts "\nYou have 12 attempts to guess the secret code."
-    puts "\n Here are the available colors:"
     puts colors
+  end
+
+  def colors
+    colors = ""
+    COLORS.each do |key, value|
+      colors << " #{value} #{key}"
+    end
+    puts "\nHere are the available colors:"
+    colors.strip
   end
 end
