@@ -10,6 +10,8 @@ class Player
     @board = board
     @game = game
     @code = generate_code
+    @permutations = all_combinations
+    @colors = COLORS.values.shuffle
   end
 
   def code # rubocop:disable Style/TrivialAccessors
@@ -131,6 +133,7 @@ class HumanMaster < Player
     num_white_pegs = wrong_positions
     if (num_red_pegs + num_white_pegs) <= 4
       @game.give_hint(num_red_pegs, num_white_pegs)
+      @permutations = filter_matches(@permutations, @board.last, num_red_pegs, num_white_pegs)
     else
       puts "That doesn't add up. Try again."
       check_guess
@@ -158,6 +161,49 @@ class HumanMaster < Player
   end
 
   def input_guess
-    @board << create_guess
+    if @board.size < 3
+      @board << create_guess
+      reduce_colors
+    else
+      @board << @permutations[0]
+    end
+  end
+
+  def create_guess
+    [@colors[0], @colors[0], @colors[1], @colors[1]].join(" ")
+  end
+
+  def reduce_colors
+    @colors.delete_at(1)
+    @colors.delete_at(0)
+  end
+
+  def exact_matches(perms, guess, num_matches)
+    matches = []
+    perms.each do |perm|
+      match = 0
+      perm.split.each_with_index do |color, idx|
+        match += 1 if color == guess.split[idx]
+      end
+      matches << perm if match == num_matches
+    end
+    matches
+  end
+
+  def loose_matches(perms, guess, num_matches)
+    matches = []
+    perms.each do |perm|
+      match = 0
+      perm.split.each_with_index do |color, idx|
+        match += 1 if guess.split.include?(color) && color != guess.split[idx]
+      end
+      matches << perm if match == num_matches
+    end
+    matches
+  end
+
+  def filter_matches(perms, guess, exact_num, loose_num)
+    perms = exact_matches(perms, guess, exact_num)
+    loose_matches(perms, guess, loose_num)
   end
 end
