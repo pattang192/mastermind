@@ -5,6 +5,8 @@ require "rubocop"
 require_relative "game"
 require_relative "mastermind"
 require_relative "player"
+require_relative "computer_master"
+require_relative "human_master"
 
 include Mastermind
 
