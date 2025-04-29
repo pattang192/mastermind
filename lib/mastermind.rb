@@ -15,6 +15,11 @@ module Mastermind
 
   MAX_TURNS = 12
 
+  def all_combinations
+    combos = COLORS.values.shuffle.repeated_permutation(4).to_a
+    combos.map { |combo| combo.join(" ") }
+  end
+
   def intro
     puts "Welcome to Mastermind"
     puts "\n#{colors}"
