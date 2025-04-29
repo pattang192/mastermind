@@ -2,18 +2,23 @@
 require_relative "mastermind"
 require_relative "game"
 
-# Contains functions shared by human and computer player
+# Contains functions shared by human and computer solver
 class Player
   include Mastermind
 
   def initialize(board, game)
     @board = board
     @game = game
+    @code = generate_code
+  end
+
+  def code # rubocop:disable Style/TrivialAccessors
+    @code
   end
 end
 
-# Contains functions unique to computer player
-class ComputerPlayer < Player
+# Set up for computer code maker and human solver
+class ComputerMaster < Player
   def generate_code
     code = ""
     i = 0
@@ -28,8 +33,34 @@ class ComputerPlayer < Player
     COLORS[COLORS.keys[rand(6)]]
   end
 
-  def check_guess(code)
-    code = code.split
+  def input_guess
+    puts "Enter your guess, separated by spaces. (Eg. red blue red blue)"
+    @board << create_code
+  end
+
+  def create_code
+    code = gets.chomp.downcase.strip.split
+    if code_valid?(code)
+      convert_to_pegs(code)
+    else
+      puts "Invalid input. Try again.".red
+      create_code
+    end
+  end
+
+  def code_valid?(code)
+    code.size == 4 && code.all? { |color| COLORS.include?(color) }
+  end
+
+  def convert_to_pegs(array)
+    array = array.map do |color|
+      COLORS[color]
+    end
+    array.join(" ")
+  end
+
+  def check_guess
+    code = @code.split
     guess = @board.last.split
     correct_positions = find_correct_positions(code, guess)
     remove_correct_positions(correct_positions, code, guess)
@@ -65,26 +96,21 @@ class ComputerPlayer < Player
   end
 end
 
-# Contains functions unique to human player
-class HumanPlayer < Player
-  def create_code
-    code = gets.chomp.downcase.strip.split
-    if code_valid?(code)
-      convert_to_pegs(code)
-    else
-      puts "Invalid input".red
-      generate_code
-    end
-  end
-
+# Set up for human code maker and computer solver
+class HumanMaster < Player
   def generate_code
     puts "Enter a four-color code, separated by spaces. (Eg. red blue red white)"
     create_code
   end
 
-  def input_guess(board)
-    puts "Enter your guess, separated by spaces. (Eg. red blue red blue)"
-    board << create_code
+  def create_code
+    code = gets.chomp.downcase.strip.split
+    if code_valid?(code)
+      convert_to_pegs(code)
+    else
+      puts "Invalid input. Try again.".red
+      create_code
+    end
   end
 
   def code_valid?(code)
@@ -92,13 +118,15 @@ class HumanPlayer < Player
   end
 
   def convert_to_pegs(array)
-    array = array.map do |color|
+    array.map do |color|
       COLORS[color]
     end
-    array.join(" ")
+    .join(" ")
   end
 
   def check_guess
+    puts "\nGUESS: #{@board.last}"
+    puts "\nCODE: #{@code}"
     num_red_pegs = correct_positions
     num_white_pegs = wrong_positions
     if (num_red_pegs + num_white_pegs) <= 4
@@ -121,11 +149,15 @@ class HumanPlayer < Player
 
   def num_of_pegs
     pegs = gets.chomp.to_i
-    if pegs.positive? && pegs <= 4
+    if pegs.between?(0, 4)
       pegs
     else
       puts "Invalid entry".red
       num_of_pegs
     end
+  end
+
+  def input_guess
+    @board << create_guess
   end
 end

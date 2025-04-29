@@ -13,9 +13,9 @@ def play_game
   human_player = choose_role
   case human_player
   when 1
-    Game.new(HumanPlayer, ComputerPlayer).play
+    Game.new(HumanMaster).play
   when 2
-    Game.new(ComputerPlayer, HumanPlayer).play
+    Game.new(ComputerMaster).play
   end
   repeat_game
 end

@@ -6,17 +6,16 @@ class Game
   attr_accessor :board, :hint_board
 
   include Mastermind
-  def initialize(player_1_class, player_2_class)
+  def initialize(player_class)
     @board = []
     @hint_board = []
-    @players = [player_1_class.new(@board, self), player_2_class.new(@board, self)]
-    @code = @players[0].generate_code
+    @player = player_class.new(@board, self)
   end
 
   def play
     loop do
-      @players[1].input_guess(@board)
-      @players[0].check_guess(@code)
+      @player.input_guess
+      @player.check_guess
       print_board
       conclusion
       return if game_over?
@@ -32,7 +31,6 @@ class Game
   def give_hint(num_red_pegs, num_white_pegs)
     hint = ""
     hint << (" #{RED}" * num_red_pegs) << (" #{WHITE}" * num_white_pegs)
-    hint << (" #{GRAY}" * (4 - (num_red_pegs + num_white_pegs))) if (num_red_pegs + num_white_pegs) < 4
     @hint_board << hint
   end
 
@@ -41,7 +39,7 @@ class Game
   end
 
   def decoded?
-    @board.last == @code
+    @hint_board.last.split.count(RED) == 4
   end
 
   def game_over?
@@ -52,7 +50,7 @@ class Game
     if decoded?
       puts "You win!"
     elsif max_turns?
-      puts "\nGAME OVER! The secret code was #{@code}"
+      puts "\nGAME OVER! The secret code was #{@player.code}"
     end
   end
 end
