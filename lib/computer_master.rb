@@ -22,27 +22,6 @@ class ComputerMaster < Player
     @board << create_code
   end
 
-  def create_code
-    code = gets.chomp.downcase.strip.split
-    if code_valid?(code)
-      convert_to_pegs(code)
-    else
-      puts "Invalid input. Try again.".red
-      create_code
-    end
-  end
-
-  def code_valid?(code)
-    code.size == 4 && code.all? { |color| COLORS.include?(color) }
-  end
-
-  def convert_to_pegs(array)
-    array = array.map do |color|
-      COLORS[color]
-    end
-    array.join(" ")
-  end
-
   def check_guess
     code = @code.split
     guess = @board.last.split
