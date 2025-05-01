@@ -25,36 +25,9 @@ class ComputerMaster < Player
   def check_guess
     code = @code.split
     guess = @board.last.split
-    correct_positions = find_correct_positions(code, guess)
-    remove_correct_positions(correct_positions, code, guess)
-    wrong_positions = find_wrong_positions(code, guess)
-    @game.give_hint(correct_positions.size, wrong_positions)
-  end
-
-  def find_correct_positions(code, guess)
-    correct_positions = []
-    code.each_with_index do |color_i, i|
-      correct_positions << i if color_i == guess[i]
-    end
-    correct_positions
-  end
-
-  def remove_correct_positions(correct_positions, code, guess)
-    correct_positions.reverse.each do |index|
-      code.delete_at(index)
-      guess.delete_at(index)
-    end
-  end
-
-  def find_wrong_positions(code, guess)
-    wrong_positions = 0
-    code.reverse.each_with_index do |color_i, i|
-      next unless guess.index(color_i)
-
-      wrong_positions += 1
-      guess.delete_at(guess.index(color_i))
-      code.delete_at(i)
-    end
-    wrong_positions
+    exact_matches = find_exact_matches(code, guess)
+    remove_exact_matches(exact_matches, code, guess)
+    loose_matches = find_loose_matches(code, guess)
+    @game.give_hint(exact_matches.size, loose_matches)
   end
 end
