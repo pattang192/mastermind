@@ -23,9 +23,9 @@ class Game
   end
 
   def print_board
-    @board.each_with_index do |guess, i|
-      puts "\n#{guess} Guess #{i + 1} \t Hint: #{@hint_board[i]}"
-    end
+    guess = @board.last
+    i = @board.size
+    puts "\n#{guess} Guess #{i} \t Hint: #{@hint_board[i - 1]}"
   end
 
   def give_hint(num_red_pegs, num_white_pegs)
@@ -39,7 +39,7 @@ class Game
   end
 
   def decoded?
-    @hint_board.last.split.count(RED) == 4
+    @board.last == @player.code # CHANGED since last commit
   end
 
   def game_over?
