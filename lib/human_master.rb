@@ -9,42 +9,19 @@ class HumanMaster < Player
   end
 
   def check_guess
-    puts "\nGUESS: #{@board.last}"
-    puts "\nCODE: #{@code}"
-    num_red_pegs = correct_positions
-    num_white_pegs = wrong_positions
-    if (num_red_pegs + num_white_pegs) <= 4
-      @game.give_hint(num_red_pegs, num_white_pegs)
-      @permutations = filter_matches(@permutations, @board.last, num_red_pegs, num_white_pegs)
-    else
-      puts "That doesn't add up. Try again."
-      check_guess
-    end
-  end
-
-  def correct_positions
-    puts "How many colors are in the correct position?"
-    num_of_pegs
-  end
-
-  def wrong_positions
-    puts "How many colors are correct, but in the wrong position?"
-    num_of_pegs
-  end
-
-  def num_of_pegs
-    pegs = gets.chomp.to_i
-    if pegs.between?(0, 4)
-      pegs
-    else
-      puts "Invalid entry".red
-      num_of_pegs
-    end
+    code = @code.split
+    guess = @board.last.split
+    exact_matches = find_exact_matches(code, guess)
+    remove_exact_matches(exact_matches, code, guess)
+    loose_matches = find_loose_matches(code, guess)
+    @game.give_hint(exact_matches.size, loose_matches)
+    @permutations = filter_matches(@permutations, @board.last, exact_matches.size, loose_matches)
+    sleep(1)
   end
 
   def input_guess
-    if @board.size < 3
-      @board << create_guess
+    if @board.count < 3
+      @board << [@colors[0], @colors[0], @colors[1], @colors[1]].join(" ")
       reduce_colors
     else
       @board << @permutations[0]
@@ -53,10 +30,6 @@ class HumanMaster < Player
         exit
       end
     end
-  end
-
-  def create_guess
-    [@colors[0], @colors[0], @colors[1], @colors[1]].join(" ")
   end
 
   def reduce_colors
@@ -68,8 +41,8 @@ class HumanMaster < Player
     matches = []
     perms.each do |perm|
       match = 0
-      perm.split.each_with_index do |color, idx|
-        match += 1 if color == guess.split[idx]
+      guess.split.each_with_index do |color, idx|
+        match += 1 if color == perm.split[idx]
       end
       matches << perm if match == num_matches
     end
@@ -78,14 +51,13 @@ class HumanMaster < Player
 
   def loose_matches(perms, guess, num_matches)
     matches = []
+    guess = guess.split
     perms.each do |perm|
-      match = 0
-      perm.split.each_with_index do |color, idx|
-        match += 1 if guess.split.include?(color) && color != guess.split[idx]
-      end
-      matches << perm if match == num_matches
+      perm = perm.split
+      exact = find_exact_matches(guess, perm)
+      remove_exact_matches(exact, guess, perm)
+      matches << perm if find_loose_matches(guess, perm) == num_matches
     end
-    matches
   end
 
   def filter_matches(perms, guess, exact_num, loose_num)
